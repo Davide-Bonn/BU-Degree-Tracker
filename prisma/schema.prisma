@@ -1,0 +1,238 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Course {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique // e.g. "CAS CS 111"
+  title         String
+  credits       Int      @default(4)
+  department    String   @default("") // e.g. "CS", "MA", "WR"
+  school        String   @default("") // e.g. "College of Arts & Sciences"
+  career        String   @default("") // "Undergraduate", "Graduate", "Law"
+  description   String   @default("")
+  prerequisites String   @default("") // raw prerequisite text from BU
+  slug          String   @unique // e.g. "cas-cs-111"
+  url           String   @default("")
+  hasLab        Boolean  @default(false) // true if course includes a lab component
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  hubAreas              CourseHubArea[]
+  schedules             CourseSchedule[]
+  prerequisiteLinks     CoursePrerequisite[]  @relation("CoursePrereqs")
+  prerequisiteOf        CoursePrerequisite[]  @relation("PrereqFor")
+  userProgress          UserCourseProgress[]
+  scenarioCourses       PlanScenarioCourse[]
+}
+
+model HubArea {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique // e.g. "SCI1"
+  name          String   // e.g. "Scientific Inquiry I"
+  capacity      String   // e.g. "Scientific & Social Inquiry"
+  unitsRequired Int      @default(1) // how many courses needed per area
+  description   String   @default("")
+
+  courses      CourseHubArea[]
+}
+
+model CourseHubArea {
+  id        Int    @id @default(autoincrement())
+  courseId  Int
+  hubAreaId Int
+
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  hubArea   HubArea @relation(fields: [hubAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, hubAreaId])
+  @@index([hubAreaId])
+}
+
+model CourseSchedule {
+  id                  Int    @id @default(autoincrement())
+  courseId            Int
+  semester            String // e.g. "Fall 2024"
+  section             String @default("")
+  instructor          String @default("") // raw full name
+  instructorLastName  String @default("")
+  instructorFirstName String @default("")
+  schedule            String @default("") // e.g. "MWF 10:10am-11:00am"
+  days                String @default("") // e.g. "M,W,F" or "T,R"
+  startTime           String @default("") // 24h "HH:MM", e.g. "10:10"
+  endTime             String @default("") // 24h "HH:MM", e.g. "11:00"
+  location            String @default("")
+  instructionMode     String @default("") // "In Person", "Online", ""
+  notes               String @default("")
+
+  course     Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([semester])
+}
+
+model CoursePrerequisite {
+  id              Int    @id @default(autoincrement())
+  courseId         Int    // the course that has the prereq
+  prerequisiteId   Int    // the prerequisite course
+  groupId         Int    @default(0) // for AND/OR grouping
+  groupType       String @default("AND") // "AND" or "OR"
+
+  course          Course @relation("CoursePrereqs", fields: [courseId], references: [id], onDelete: Cascade)
+  prerequisite    Course @relation("PrereqFor", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, prerequisiteId])
+  @@index([courseId])
+}
+
+model Program {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique // e.g. "cs-ba", "math-minor"
+  name        String   // e.g. "Computer Science BA"
+  type        String   // "major", "minor", "joint-major"
+  description String   @default("")
+  isActive    Boolean  @default(false) // is the student tracking this?
+
+  requirements ProgramRequirement[]
+  userPrograms UserProgram[]
+}
+
+model ProgramRequirement {
+  id          Int    @id @default(autoincrement())
+  programId   Int
+  groupName   String // e.g. "A", "B", "C", "D"
+  description String @default("")
+  minCourses  Int    @default(1)
+
+  program     Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  courses     ProgramRequirementCourse[]
+}
+
+model ProgramRequirementCourse {
+  id            Int     @id @default(autoincrement())
+  requirementId Int
+  courseCode    String  // e.g. "CAS CS 111"
+  isRequired   Boolean @default(false)
+
+  requirement   ProgramRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@unique([requirementId, courseCode])
+}
+
+// Manually entered hub satisfactions for courses not in the DB
+model HubAreaOverride {
+  id         Int      @id @default(autoincrement())
+  hubCode    String   // e.g. "PHI3"
+  courseName String   // e.g. "CAS HI 251" or any label
+  note       String   @default("") // optional note
+  createdAt  DateTime @default(now())
+}
+
+model ProfessorRating {
+  id                Int      @id @default(autoincrement())
+  name              String   // last name as it appears in CourseSchedule.instructor
+  rmpId             String   @default("")
+  avgRating         Float    @default(0)
+  avgDifficulty     Float    @default(0)
+  numRatings        Int      @default(0)
+  wouldTakeAgainPct Float    @default(-1) // -1 = N/A
+  department        String   @default("") // RMP department name, e.g. "Computer Science"
+  updatedAt         DateTime @updatedAt
+
+  reviews ProfessorReview[]
+
+  @@unique([name, department]) // allows two Sullivans if they're in different departments
+}
+
+// Individual student reviews scraped from RateMyProfessors.
+// Stored per-professor; rmpClass ties a review to a specific course (e.g. "CS131").
+model ProfessorReview {
+  id               Int     @id @default(autoincrement())
+  professorId      Int     @default(0) // FK -> ProfessorRating.id
+  professorName    String  @default("") // kept for display / backward-compat queries
+  comment          String  @default("")
+  date             String  @default("") // "YYYY-MM-DD"
+  rmpClass         String  @default("") // e.g. "CS131" as students type it
+  clarityRating    Int     @default(0)  // 1-5
+  difficultyRating Int     @default(0)  // 1-5
+  wouldTakeAgain   Boolean?             // null = student didn't answer
+  grade            String  @default("") // e.g. "A", "B+", or "" if not given
+  thumbsUpTotal    Int     @default(0)
+  thumbsDownTotal  Int     @default(0)
+
+  professor ProfessorRating @relation(fields: [professorId], references: [id], onDelete: Cascade)
+}
+
+model UserCourseProgress {
+  id        Int      @id @default(autoincrement())
+  userId    String   @default("")  // Supabase auth UUID; "" = single-user/legacy
+  courseId  Int
+  status    String   // "completed", "in-progress", "planned"
+  semester  String   @default("") // e.g. "Fall 2024"
+  grade     String   @default("") // e.g. "A", "B+", etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, userId])
+  @@index([userId])
+}
+
+// Supabase user profile + onboarding data (stored alongside SQLite course data)
+model UserProfile {
+  id             String   @id              // Supabase auth.users UUID
+  email          String
+  displayName    String   @default("")
+  startSemester  String   @default("")     // e.g. "Fall 2024"
+  endSemester    String   @default("")     // e.g. "Spring 2028"
+  onboardingDone Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Named plan scenarios — each user can have multiple saved 4-year plans
+model PlanScenario {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  name        String
+  favourited  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courses   PlanScenarioCourse[]
+
+  @@index([userId])
+}
+
+model PlanScenarioCourse {
+  id         Int     @id @default(autoincrement())
+  scenarioId Int
+  courseId   Int
+  semester   String
+  pinned     Boolean @default(false)
+
+  scenario PlanScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  course   Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([scenarioId, courseId])
+  @@index([scenarioId])
+}
+
+// Which programs each user is tracking
+model UserProgram {
+  id        Int     @id @default(autoincrement())
+  userId    String
+  programId Int
+
+  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, programId])
+}

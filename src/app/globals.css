@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+:root {
+  --background: #eeedf7;
+  --foreground: #2d2926;
+  --card: #ffffff;
+  --card-border: #d8d6e3;
+  --muted: #6b6880;
+  --accent: #cc0000;
+  --accent-light: #fee2e2;
+  --success: #16a34a;
+  --success-light: #dcfce7;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
+  --info: #3b4785;
+  --info-light: #e0e3f0;
+  --sidebar-bg: #cc0000;
+  --sidebar-active: rgba(255, 255, 255, 0.25);
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-border: #334155;
+  --muted: #94a3b8;
+  --accent: #f87171;
+  --accent-light: #3b0a0a;
+  --success: #4ade80;
+  --success-light: #052e16;
+  --warning: #fbbf24;
+  --warning-light: #1c0a00;
+  --info: #60a5fa;
+  --info-light: #172554;
+  --sidebar-bg: #7a0000;
+  --sidebar-active: rgba(255, 255, 255, 0.2);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-danger: var(--accent);
+  --color-danger-light: var(--accent-light);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* BU Sidebar */
+.bu-sidebar {
+  background: var(--sidebar-bg);
+}
+
+/* ── Dark mode overrides for Tailwind built-in colors ──────────────────────── */
+
+/* Neutral grays */
+.dark .bg-gray-50  { background-color: #1e293b !important; }
+.dark .bg-gray-100 { background-color: #334155 !important; }
+.dark .bg-gray-200 { background-color: #475569 !important; }
+.dark .hover\:bg-gray-50:hover  { background-color: #1e293b !important; }
+.dark .hover\:bg-gray-100:hover { background-color: #334155 !important; }
+.dark .hover\:bg-gray-200:hover { background-color: #475569 !important; }
+.dark .text-gray-100 { color: #1e293b !important; }
+
+/* White backgrounds (grade badges, dropdowns) */
+.dark .bg-white   { background-color: #1e293b !important; }
+.dark .bg-white\/60 { background-color: rgb(30 41 59 / 0.6) !important; }
+.dark .bg-white\/70 { background-color: rgb(30 41 59 / 0.7) !important; }
+
+/* Season / mode badges */
+.dark .bg-orange-50  { background-color: #431407 !important; }
+.dark .text-orange-700 { color: #fb923c !important; }
+.dark .bg-green-50   { background-color: #052e16 !important; }
+.dark .text-green-700  { color: #4ade80 !important; }
+.dark .bg-amber-50   { background-color: #1c0a00 !important; }
+.dark .bg-amber-50\/60 { background-color: rgb(28 10 0 / 0.6) !important; }
+.dark .text-amber-700  { color: #fbbf24 !important; }
+.dark .bg-purple-50  { background-color: #1e0a3c !important; }
+.dark .text-purple-700 { color: #c084fc !important; }
