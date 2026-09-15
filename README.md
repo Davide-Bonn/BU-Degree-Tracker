@@ -20,7 +20,38 @@ Track credits, GPA, BU Hub requirements, CS degree progress, and plan your semes
 
 ## Demo
 
-https://github.com/Davide-Bonn/BU-Degree-Tracker/blob/master/docs/demo.mp4
+![Demo](docs/demo-preview.gif)
+
+> [Download full demo video (2 min)](https://github.com/Davide-Bonn/BU-Degree-Tracker/releases/download/v1.0.0/Demo_video.mp4)
+
+---
+
+## Screenshots
+
+### Dashboard
+Track credits, GPA, CAS requirements, and Hub progress at a glance with interactive progress rings.
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### BU Hub Requirements
+All 21 Hub areas across 6 color-coded capacities. See which areas are satisfied, which are in progress, and get course suggestions for missing ones.
+
+![Hub](docs/screenshots/hub.png)
+
+### Course Browser
+Browse and filter 1000+ courses by department, Hub area, semester, and instruction mode. Each card shows credits, Hub badges, and current status.
+
+![Courses](docs/screenshots/courses.png)
+
+### Semester Planner
+Drag-and-drop courses between semesters. Live Hub requirement and program progress tracking in the sidebar with prerequisite violation warnings.
+
+![Planner](docs/screenshots/planner.png)
+
+### Degree Scenarios
+Auto-generate 10 complete degree plans that satisfy all Hub, major, and credit requirements. Pin courses you want to keep, then regenerate.
+
+![Scenarios](docs/screenshots/scenarios.png)
 
 ---
 
@@ -34,10 +65,10 @@ https://github.com/Davide-Bonn/BU-Degree-Tracker/blob/master/docs/demo.mp4
 | **Semester Planner** | Drag-and-drop course scheduling with prerequisite violation warnings |
 | **Course Browser** | Filter by department, Hub area, or semester across 1000+ courses |
 | **RateMyProfessors** | Star ratings, difficulty scores, and student reviews on every course page |
+| **Degree Scenarios** | Auto-generate full 4-year plans satisfying all requirements |
 | **Multiple Programs** | Track major, minors, and joint majors simultaneously |
 | **Multi-user Auth** | Supabase authentication for per-user progress tracking |
 | **PDF Export** | Export your semester plan as a PDF |
-| **Manual Hub Overrides** | Mark Hub areas as satisfied for courses not in the database |
 
 ---
 
