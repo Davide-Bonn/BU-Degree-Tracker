@@ -20,7 +20,7 @@ Track credits, GPA, BU Hub requirements, CS degree progress, and plan your semes
 
 ## Demo
 
-<video src="https://github.com/Davide-Bonn/BU-Degree-Tracker/releases/download/v1.0.0/Demo_video.mp4" controls width="100%"></video>
+[**Watch the demo video**](https://github.com/Davide-Bonn/BU-Degree-Tracker/releases/download/v1.0.0/Demo_video.mp4)
 
 ---
 
