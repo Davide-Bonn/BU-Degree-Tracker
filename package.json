@@ -1,0 +1,51 @@
+{
+  "name": "university-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "deploy:data": "bash scripts/deploy.sh",
+    "deploy:data:cas": "bash scripts/deploy.sh --schools cas",
+    "refresh": "npx tsx scripts/refresh.ts",
+    "refresh:cas": "npx tsx scripts/refresh.ts --schools cas",
+    "scrape": "npx tsx scripts/scrape.ts",
+    "scrape:rmp": "npx tsx scripts/scrape-rmp.ts",
+    "tag:labs": "npx tsx scripts/tag-lab-courses.ts",
+    "seed:programs": "npx tsx scripts/seed-programs.ts",
+    "screenshot": "npx tsx scripts/screenshot.ts",
+    "screenshot:prod": "npx tsx scripts/screenshot.ts --url"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.7",
+    "cheerio": "^1.2.0",
+    "dotenv": "^17.4.2",
+    "jspdf": "^4.2.1",
+    "next": "16.2.10",
+    "nextjs-toploader": "^3.9.17",
+    "pdf-lib": "^1.17.1",
+    "prisma": "^6.19.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tsx": "^4.23.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/cheerio": "^0.22.35",
+    "@types/node": "^20",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "pg": "^8.22.0",
+    "playwright": "^1.61.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
