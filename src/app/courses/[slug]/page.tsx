@@ -123,8 +123,8 @@ export default async function CourseDetailPage({
 
       // Prefer the record whose department matches this course's dept; fall back to any.
       const allRows = await prisma.$queryRaw<RMPRow[]>(
-        Prisma.sql`SELECT id, name, avgRating, avgDifficulty, numRatings, wouldTakeAgainPct, rmpId
-         FROM ProfessorRating WHERE name IN (${Prisma.join(instructorNames)})`
+        Prisma.sql`SELECT id, name, "avgRating", "avgDifficulty", "numRatings", "wouldTakeAgainPct", "rmpId"
+         FROM "ProfessorRating" WHERE name IN (${Prisma.join(instructorNames)})`
       );
 
       // For each instructor name, pick the best-matching row by dept keyword
@@ -150,8 +150,8 @@ export default async function CourseDetailPage({
 
       if (profIds.length > 0) {
         const allReviews = await prisma.$queryRaw<ReviewRow[]>(
-          Prisma.sql`SELECT * FROM ProfessorReview WHERE professorId IN (${Prisma.join(profIds)})
-           ORDER BY CASE WHEN rmpClass = ${rmpClass} THEN 0 ELSE 1 END, date DESC`
+          Prisma.sql`SELECT * FROM "ProfessorReview" WHERE "professorId" IN (${Prisma.join(profIds)})
+           ORDER BY CASE WHEN "rmpClass" = ${rmpClass} THEN 0 ELSE 1 END, date DESC`
         );
         for (const r of allReviews) {
           const list = reviewsByInstructor.get(r.professorName) ?? [];
